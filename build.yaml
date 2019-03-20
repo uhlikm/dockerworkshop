@@ -49,6 +49,7 @@ steps:
 
     PathtoPublish: 'Docker.Client/dist/docker-test'
 
-    ArtifactName: '$(Parameters.ArtifactName)'
+    ArtifactName: 'drop'
+#    ArtifactName: '$(Parameters.ArtifactName)'
 
 
