@@ -1,0 +1,54 @@
+pool:
+
+  name: Default-Non-Prod
+
+  demands:
+
+  - npm
+
+
+
+#Your build pipeline references an undefined variable named ‘Parameters.ArtifactName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+
+
+
+steps:
+
+
+- task: Npm@1
+
+  displayName: 'Install dependencies'
+
+  inputs:
+
+    workingDir: Docker.Client
+
+    verbose: true
+
+
+
+- task: CmdLine@1
+
+  displayName: 'ng build'
+
+  inputs:
+
+    filename: 'node_modules\.bin\ng'
+
+    arguments: 'build --prod'
+
+    workingFolder: Docker.Client
+
+
+
+- task: PublishBuildArtifacts@1
+
+  displayName: 'Publish Artifact: drop'
+
+  inputs:
+
+    PathtoPublish: 'Docker.Client/dist/docker-test'
+
+    ArtifactName: '$(Parameters.ArtifactName)'
+
+
