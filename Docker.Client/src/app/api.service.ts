@@ -13,7 +13,8 @@ export class ApiService {
   constructor(private httpClient: HttpClient) { }
 
   testApi(): Observable<any> {
-    const url = 'https://localhost:44389/api/values';
+    // const url = 'https://localhost:44389/api/values';
+    const url = 'http://localhost:62641/api/Books';
     console.log(url);
     return this.httpClient.get<any>(url, { withCredentials: true })
     .pipe(
