@@ -17,8 +17,8 @@ namespace WebCore.API.Controllers
         public JArray Get()
         {
             JArray jaBooks = new JArray();
-            jaBooks.Add(JObject.Parse("{ \"title\": \"Book1\", \"author\": \"Name1\" }"));
-            jaBooks.Add(JObject.Parse("{ \"title\": \"Book2\", \"author\": \"Name2\" }"));
+            jaBooks.Add(JObject.Parse("{ \"id\": \"1\", \"name\": \"Book1\", \"author\": \"Name1\" }"));
+            jaBooks.Add(JObject.Parse("{ \"id\": \"2\", \"name\": \"Book2\", \"author\": \"Name2\" }"));
             return jaBooks;
         }
 
@@ -26,13 +26,15 @@ namespace WebCore.API.Controllers
         [HttpGet("{id}", Name = "Get")]
         public JObject Get(int id)
         {
-            return JObject.Parse("{ \"title\": \"Book1\", \"author\": \"Name1\" }");
+            return JObject.Parse("{ \"id\": \"1\", \"name\": \"Book1\", \"author\": \"Name1\" }");
         }
 
         // POST: api/Books
         [HttpPost]
-        public void Post([FromBody] JObject value)
+        public JObject Post([FromBody] JObject value)
         {
+            value["id"] = "3";
+            return value;
         }
 
         // PUT: api/Books/5
