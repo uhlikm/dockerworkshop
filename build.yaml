@@ -1,55 +1,47 @@
 pool:
 
-  name: Default-Non-Prod
-
-  demands:
-
-  - npm
-
-
-
-#Your build pipeline references an undefined variable named ‘Parameters.ArtifactName’. Create or edit the build pipeline for this YAML file, define the variable on the Variables tab. See https://go.microsoft.com/fwlink/?linkid=865972
+  name: Hosted Ubuntu 1604
 
 
 
 steps:
 
+- task: Docker@2
 
-- task: Npm@1
-
-  displayName: 'Install dependencies'
-
-  inputs:
-
-    workingDir: Docker.Client
-
-    verbose: true
-
-
-
-- task: CmdLine@1
-
-  displayName: 'ng build'
+  displayName: 'buildAndPush frontend angular'
 
   inputs:
 
-    filename: 'node_modules\.bin\ng'
+    containerRegistry: 'Azure Public RMITPOC'
 
-    arguments: 'build --prod'
+    repository: frontendangular
 
-    workingFolder: Docker.Client
+    Dockerfile: Docker.Client/Dockerfile
+
+    buildContext: Docker.Client
+
+    tags: |
+     $(Build.BuildId)
+     latest
 
 
 
-- task: PublishBuildArtifacts@1
+- task: Docker@2
 
-  displayName: 'Publish Artifact: drop'
+  displayName: 'buildAndPush backend dotnetcore'
 
   inputs:
 
-    PathtoPublish: 'Docker.Client/dist/docker-test'
+    containerRegistry: 'Azure Public RMITPOC'
 
-    ArtifactName: 'drop'
-#    ArtifactName: '$(Parameters.ArtifactName)'
+    repository: backenddotnetcore
+
+    Dockerfile: WebCore.API/Dockerfile
+
+    buildContext: WebCore.API
+
+    tags: |
+     $(Build.BuildId)
+     latest
 
 
