@@ -9,7 +9,7 @@ WORKDIR /app
 COPY . .
 
 RUN npm install
-RUN node_modules\.bin\ng build --prod
+RUN $(npm bin)/ng build --prod --output-path=dist
 
 
 # build runtime image
@@ -19,4 +19,4 @@ COPY nginx.conf /etc/nginx/nginx.conf
 
 WORKDIR /usr/share/nginx/html
 
-COPY --from=builder /app/dist/docker-test/* .
+COPY --from=builder /app/dist/* .
