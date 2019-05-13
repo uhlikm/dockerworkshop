@@ -1,21 +1,34 @@
-# https://www.codementor.io/yomateo/angular-docker-dockerize-your-app-in-5-minutes-video-included-oohw2mzuj
+# https://medium.com/@avatsaev/create-efficient-angular-docker-images-with-multi-stage-builds-907e2be3008d
 
-# build app
-FROM node:alpine AS builder
+### STAGE 1: Build ###
 
-WORKDIR /app
+# We label our stage as ‘builder’
+FROM node:10-alpine as builder
+
+COPY package.json package-lock.json ./
+
+## Storing node modules on a separate layer will prevent unnecessary npm installs at each build
+RUN npm i && mkdir /ng-app && mv ./node_modules ./ng-app
+
+WORKDIR /ng-app
 
 COPY . .
 
-RUN npm install
-RUN $(npm bin)/ng build --prod --output-path=dist
+## Build the angular app in production mode and store the artifacts in dist folder
+RUN $(npm bin)/ng build --prod --output-path=dist
 
 
-# build runtime image
-FROM nginx:alpine
+### STAGE 2: Setup ###
 
-COPY nginx.conf /etc/nginx/nginx.conf
+FROM nginx:1.14.1-alpine
 
-WORKDIR /usr/share/nginx/html
+## Copy our default nginx config
+COPY nginx/default.conf /etc/nginx/conf.d/
 
-COPY --from=builder /app/dist/* .
+## Remove default nginx website
+RUN rm -rf /usr/share/nginx/html/*
+
+## From ‘builder’ stage copy over the artifacts in dist folder to default nginx public folder
+COPY --from=builder /ng-app/dist /usr/share/nginx/html
+
+CMD ["nginx", "-g", "daemon off;"]
