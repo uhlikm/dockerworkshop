@@ -1,44 +1,22 @@
-#Depending on the operating system of the host machines(s) that will build or run the containers, the image specified in the FROM statement may need to be changed.
-#For more information, please see https://aka.ms/containercompat
-
-#FROM microsoft/dotnet:2.1-aspnetcore-runtime-nanoserver-1709 AS base
-#WORKDIR /app
-#EXPOSE 80
-#EXPOSE 443
-#
-#FROM microsoft/dotnet:2.1-sdk-nanoserver-1709 AS build
-#WORKDIR /src
-#COPY ["WebCore.API/WebCore.API.csproj", "WebCore.API/"]
-#RUN dotnet restore "WebCore.API/WebCore.API.csproj"
-#COPY . .
-#WORKDIR "/src/WebCore.API"
-#RUN dotnet build "WebCore.API.csproj" -c Release -o /app
-#
-#FROM build AS publish
-#RUN dotnet publish "WebCore.API.csproj" -c Release -o /app
-#
-#FROM base AS final
-#WORKDIR /app
-#COPY --from=publish /app .
-#ENTRYPOINT ["dotnet", "WebCore.API.dll"]
-
+# https://docs.docker.com/engine/examples/dotnetcore/
 
 
 FROM microsoft/dotnet:sdk AS build-env
+
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
 
 # Copy csproj and restore as distinct layers
 COPY *.csproj ./
-RUN dotnet restore
+run dotnet restore
 
-# Copy everything else and build
-COPY . ./
-RUN dotnet publish -c Release -o out
+# copy everything else and build
+copy . ./
+run dotnet publish -c release -o out
 
-# Build runtime image
-FROM microsoft/dotnet:aspnetcore-runtime
-WORKDIR /app
-COPY --from=build-env /app/out .
-ENTRYPOINT ["dotnet", "WebCore.API.dll"]
+# build runtime image
+from microsoft/dotnet:aspnetcore-runtime
+workdir /app
+expose 80
+expose 443
+copy --from=build-env /app/out .
+entrypoint ["dotnet", "WebCore.API.dll"]

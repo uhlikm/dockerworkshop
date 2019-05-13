@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
 
 import { ApiService }  from '../api.service';
@@ -13,6 +13,7 @@ export class BookDetailComponent implements OnInit {
   @Input() book: any;
 
   constructor(
+    private router: Router,
     private route: ActivatedRoute,
     private apiService: ApiService,
     private location: Location
@@ -34,6 +35,6 @@ export class BookDetailComponent implements OnInit {
 
  save(): void {
     this.apiService.updateBook(this.book)
-      .subscribe(() => this.goBack());
+      .subscribe(() => this.router.navigate(['/books']));
   }
 }

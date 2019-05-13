@@ -98,7 +98,9 @@ export class ApiService {
 
   /** PUT: update the Book on the server */
   updateBook (book: any): Observable<any> {
-    return this.http.put(this.booksUrl, book, httpOptions).pipe(
+    const url = `${this.booksUrl}/${book.id}`;
+    //return this.http.put(this.booksUrl, book, httpOptions).pipe(
+    return this.http.post(url, book, httpOptions).pipe(
       tap(_ => this.log(`updated Book id=${book.id}`)),
       catchError(this.handleError<any>('updateBook'))
     );
